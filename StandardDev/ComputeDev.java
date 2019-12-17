@@ -1,101 +1,88 @@
-import java.util.Scanner;
+ import java.util.Scanner;
 
 public class ComputeDev {
 
-    private Numbers myNumber[];
+    private Numbers myNum;
     private int index;
 
 
     ComputeDev(int index) {
-        myNumber = new Numbers[index];
+        myNum = new Numbers(index);
         this.index = index;
 
     }
 
-    //Build array of numbers
-    public void createNumArray() {
+    //get array of numbers
+    void createNumArray(double[] userNumbers) {
 
-        Scanner input = new Scanner(System.in);
-        double value = 0;
-
-
-            System.out.println("Enter your numbers: ");
-
-            for (int i = 0; i < index; i++) {
-
-                value = input.nextDouble();
-                myNumber[i].setNum(value);
-                input.nextLine();
-                 }
+        myNum.setNum(userNumbers);               
 
         }
-
-
-
-
-
-
-    public void printArrayValues() {
-
-        for (int x = 0; x < index; x++) {
-            System.out.print(myNumber[x].getNum() + " ");
-        }
-    }
 
     public void arrangeNumbers() {
         double temp = 0;
-
+        double[] userNums = myNum.getAllNums();
+        
         for (int i = 0; i < index; i++) {
 
             for (int j = 0; j < index; j++) {
-                if (myNumber[i].getNum() < myNumber[j].getNum()) {
-                    temp = myNumber[i].getNum();
-                    myNumber[i].setNum(myNumber[j].getNum());
-                    myNumber[j].setNum(temp);
+                if (userNums[i] < userNums[j]) {
+                    temp = userNums[i];
+                    userNums[i] = userNums[j];
+                    userNums[j] = temp;
 
                 }
 
             }
 
         }
-    }
+        
+        myNum.setNum(userNums);
+    }//end arrangeNumbers
 
-    public double calculateMean() {
-        double temp = 0;
+    double calculateMean() {
+        double sum = 0;
+        double mean = 0;
 
+        
         for (int i = 0; i < index; i++) {
-            temp += myNumber[i].getNum();
+            sum += myNum.getNum(i);
 
         }
 
-        temp = temp / index;
+        mean = sum / index;
 
-        return temp;
+        return mean;
 
     }
 
     public double calMedian() {
         double temp;
-        double myIndex = (double) index;
+        Double temp2;
+        Double myIndex = new Double(index);
         double tempA;
         double tempB;
 
-        int mean;
+        int median;
+        int medianIndex;
 
         arrangeNumbers();
 
         if (index % 2 > 0) {
             temp = myIndex / 2;
             temp += .5;
-            mean = (int) temp;
+            temp2 = new Double(temp);
+            median = temp2.intValue();
 
-            return myNumber[mean].getNum();
+            return myNum.getNum(median);
 
         } else if (index % 2 == 0) {
-            temp = (myIndex / 2);
-            tempA = myNumber[(int) temp].getNum();
-            temp++;
-            tempB = myNumber[(int) temp].getNum();
+            temp2 = myIndex/2; 
+            medianIndex = temp2.intValue();
+            tempA = myNum.getNum(medianIndex);
+            medianIndex++;
+            
+            tempB = myNum.getNum(medianIndex);
 
             tempB = tempA + tempB;
 
@@ -112,23 +99,19 @@ public class ComputeDev {
     public double calcMode() {
 
         double[] temp;
-
-
-        temp = new double[(myNumber.length)];
-        //index2 = (int) ((((double) index) / 2) + .5);
-        // index3 = index2;
+        temp = new double[index];
 
         for (int i = 0; i < index; i++) {
 
             for (int j = 0; j < index; j++) {
-                if (myNumber[i].getNum() == myNumber[j].getNum()) {
+                if (myNum.getNum(i) == myNum.getNum(j)) {
                     temp[i] += 1;
-                }
+                }//end if
+            }//end for
 
-            }
-
-        }
-        sortArray(temp);
+        }//end for
+        
+        temp = sortArray(temp);
 
         return getModeValue(temp);
        // return 0;
@@ -136,31 +119,31 @@ public class ComputeDev {
 
 
     public double standardDeviation() {
-        double temp;
+        double mean;
         double someOfSquares = 0;
-        double temp3 = 0;
+        double square = 0;
+        double quotient = 0;
         double[] temp2 = new double[index];
+        Double myIndex = new Double(index);
+        double stdDeviation = 0;
 
-
-        temp = calculateMean();
-        //Subtracts the mean from each value.
+        mean = calculateMean();
+        //Subtracts the mean and gets squares.
         for (int i = 0; i < index; i++) {
-            temp2[i] = myNumber[i].getNum() - temp;
+            square = (myNum.getNum(i) - mean)*(myNum.getNum(i) - mean);
+            temp2[i] = square;
         }
-        //Squares each of the values
-        for (int a = 0; a < temp2.length; a++) {
-            temp2[a] = Math.pow(temp2[a], 2);
-        }
-        //Sums the values
+        
+        //Sums the Squares
         for (int b = 0; b < temp2.length; b++) {
             someOfSquares += temp2[b];
         }
 
-        temp3 = someOfSquares / temp2.length;
+        quotient = someOfSquares / myIndex;
 
-        temp3 = Math.sqrt(temp3);
+        stdDeviation = Math.sqrt(quotient);
 
-        return temp3;
+        return stdDeviation;
 
     }
 
@@ -173,18 +156,19 @@ public class ComputeDev {
                 if (temp[i] >= temp[j]) {
                     temp2 = temp[i];
                     if(temp2 >= temp[(temp.length - 1)]) {
-                        return myNumber[i].getNum();
+                        return myNum.getNum(i);
                     }
                 }
 
             }
 
-        }
+        } 
         return -1;
     }
 
     private double[] sortArray(double[] temp){
         double temp3;
+        
         for (int i = 0; i < temp.length; i++) {
             for (int j = 0; j < temp.length; j++) {
                 if (temp[i] < temp[j]) {
@@ -196,5 +180,13 @@ public class ComputeDev {
         }
         return temp;
     }
-
-}
+//----------------------------------------------------
+   void printArrayValues(){
+      
+      for(double value: myNum.getAllNums()){
+         System.out.print(value+", ");
+      }
+      
+      System.out.println();
+   }
+}//end class
